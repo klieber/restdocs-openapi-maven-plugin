@@ -1,6 +1,6 @@
 package com.berkleytechnologyservices.restdocs.mojo;
 
-import com.berkleytechnologyservices.restdocs.model.OpenApiModel;
+import com.berkleytechnologyservices.restdocs.resource.ResourceModel;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -102,8 +102,9 @@ public class GenerateMojo extends AbstractMojo {
     writeSpecificationToFile(generateSpecification(snippetReader.getModels(snippetDirectory)));
   }
 
-  private String generateSpecification(List<OpenApiModel> models) throws MojoExecutionException {
+  private String generateSpecification(List<ResourceModel> models) throws MojoExecutionException {
     try {
+      System.out.println("There are " + models.size() + " found: " + models);
       return specificationGeneratorFactory.createGenerator(specification).generate(new ApiDetails(name, version), models);
     } catch (SpecificationGeneratorException e) {
       throw new MojoExecutionException("Unable to generate specification.", e);

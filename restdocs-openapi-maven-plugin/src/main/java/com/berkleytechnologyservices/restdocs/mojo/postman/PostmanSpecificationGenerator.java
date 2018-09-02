@@ -1,12 +1,12 @@
 package com.berkleytechnologyservices.restdocs.mojo.postman;
 
-import com.berkleytechnologyservices.restdocs.model.OpenApiModel;
-import com.berkleytechnologyservices.restdocs.model.OpenApiParameter;
-import com.berkleytechnologyservices.restdocs.model.OpenApiRequest;
 import com.berkleytechnologyservices.restdocs.mojo.ApiDetails;
 import com.berkleytechnologyservices.restdocs.mojo.Specification;
 import com.berkleytechnologyservices.restdocs.mojo.SpecificationGenerator;
 import com.berkleytechnologyservices.restdocs.mojo.SpecificationGeneratorException;
+import com.berkleytechnologyservices.restdocs.resource.ParameterDescriptor;
+import com.berkleytechnologyservices.restdocs.resource.RequestModel;
+import com.berkleytechnologyservices.restdocs.resource.ResourceModel;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -26,7 +26,7 @@ public class PostmanSpecificationGenerator implements SpecificationGenerator {
   }
 
   @Override
-  public String generate(ApiDetails details, List<OpenApiModel> models) throws SpecificationGeneratorException {
+  public String generate(ApiDetails details, List<ResourceModel> models) throws SpecificationGeneratorException {
     PostmanInfo info = new PostmanInfo(
         details.getName(),
         "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -39,7 +39,7 @@ public class PostmanSpecificationGenerator implements SpecificationGenerator {
         .map((model) -> {
 
           List<PostmanParam> postmanVariables = createPostmanParams(model.getRequest().getPathParameters());
-          List<PostmanParam> postmanQueryParams = createPostmanParams(model.getRequest().getQueryParameters());
+          List<PostmanParam> postmanQueryParams = createPostmanParams(model.getRequest().getRequestParameters());
 
           String rawUrl = createItemName(model.getRequest());
 
@@ -54,15 +54,16 @@ public class PostmanSpecificationGenerator implements SpecificationGenerator {
           PostmanUrl url = new PostmanUrl();
           url.setRaw(rawUrl);
           url.setProtocol("http");
-          url.getHost().add(model.getRequest().getHost());
+          url.getHost().add("{{host}}");
+//          url.getHost().add(model.getRequest().getHost());
           url.setPort("80");
-          url.getPath().addAll(splitPath(model.getRequest().getBasePath(), postmanVariables));
+//          url.getPath().addAll(splitPath(model.getRequest().getBasePath(), postmanVariables));
           url.getPath().addAll(splitPath(model.getRequest().getPath(), postmanVariables));
           url.getVariable().addAll(postmanVariables);
           url.getQuery().addAll(postmanQueryParams);
 
           PostmanRequest request = new PostmanRequest();
-          request.setMethod(model.getRequest().getHttpMethod().toUpperCase());
+          request.setMethod(model.getRequest().getMethod().name());
           request.setUrl(url);
 
           PostmanItem item = new PostmanItem();
@@ -82,15 +83,16 @@ public class PostmanSpecificationGenerator implements SpecificationGenerator {
     }
   }
 
-  private String createItemName(OpenApiRequest request) {
-    return "http://" + request.getHost() + request.getBasePath() + request.getPath();
+  private String createItemName(RequestModel request) {
+//    return "http://" + request.getHost() + request.getBasePath() + request.getPath();
+    return request.getPath();
   }
 
-  private List<PostmanParam> createPostmanParams(List<OpenApiParameter> params) {
+  private List<PostmanParam> createPostmanParams(List<ParameterDescriptor> params) {
     return params != null ? params.stream().map(this::createPostmanParam).collect(Collectors.toList()) : Collections.emptyList();
   }
 
-  private PostmanParam createPostmanParam(OpenApiParameter param) {
+  private PostmanParam createPostmanParam(ParameterDescriptor param) {
     PostmanParam postmanParam = new PostmanParam();
     postmanParam.setKey(param.getName());
     postmanParam.setValue("{{"+param.getName()+"}}");

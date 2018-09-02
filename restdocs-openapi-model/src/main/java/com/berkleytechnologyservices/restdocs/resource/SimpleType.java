@@ -4,5 +4,7 @@ public enum SimpleType {
   STRING,
   INTEGER,
   NUMBER,
-  BOOLEAN
+  BOOLEAN,
+  OBJECT,
+  ARRAY
 }

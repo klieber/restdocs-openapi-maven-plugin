@@ -1,0 +1,71 @@
+{
+  "operationId" : "product-get",
+  "summary" : null,
+  "description" : null,
+  "privateResource" : false,
+  "deprecated" : false,
+  "request" : {
+    "path" : "/products/{id}",
+    "method" : "GET",
+    "contentType" : null,
+    "headers" : [ ],
+    "pathParameters" : [ ],
+    "requestParameters" : [ ],
+    "requestFields" : [ ],
+    "example" : null,
+    "securityRequirements" : null
+  },
+  "response" : {
+    "status" : 200,
+    "contentType" : "application/hal+json",
+    "headers" : [ ],
+    "responseFields" : [ {
+      "attributes" : {
+        "validationConstraints" : [ {
+          "name" : "javax.validation.constraints.NotEmpty",
+          "configuration" : {
+            "groups" : [ ],
+            "message" : "{javax.validation.constraints.NotEmpty.message}",
+            "payload" : [ ]
+          }
+        } ]
+      },
+      "description" : "The name of the product.",
+      "ignored" : false,
+      "path" : "name",
+      "type" : "STRING",
+      "optional" : false
+    }, {
+      "attributes" : {
+        "validationConstraints" : [ {
+          "name" : "javax.validation.constraints.NotNull",
+          "configuration" : {
+            "groups" : [ ],
+            "message" : "{javax.validation.constraints.NotNull.message}",
+            "payload" : [ ]
+          }
+        }, {
+          "name" : "javax.validation.constraints.Positive",
+          "configuration" : {
+            "groups" : [ ],
+            "message" : "{javax.validation.constraints.Positive.message}",
+            "payload" : [ ]
+          }
+        } ]
+      },
+      "description" : "The price of the product.",
+      "ignored" : false,
+      "path" : "price",
+      "type" : "NUMBER",
+      "optional" : false
+    }, {
+      "attributes" : { },
+      "description" : "Links section",
+      "ignored" : false,
+      "path" : "_links",
+      "type" : "OBJECT",
+      "optional" : false
+    } ],
+    "example" : "{\n  \"name\" : \"Fancy pants\",\n  \"price\" : 49.99,\n  \"_links\" : {\n    \"self\" : {\n      \"href\" : \"http://localhost:8080/products/7\"\n    },\n    \"product\" : {\n      \"href\" : \"http://localhost:8080/products/7\"\n    }\n  }\n}"
+  }
+}

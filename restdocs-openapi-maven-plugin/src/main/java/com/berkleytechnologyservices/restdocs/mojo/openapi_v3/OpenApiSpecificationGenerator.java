@@ -1,9 +1,9 @@
 package com.berkleytechnologyservices.restdocs.mojo.openapi_v3;
 
-import com.berkleytechnologyservices.restdocs.model.OpenApiModel;
 import com.berkleytechnologyservices.restdocs.mojo.ApiDetails;
 import com.berkleytechnologyservices.restdocs.mojo.Specification;
 import com.berkleytechnologyservices.restdocs.mojo.SpecificationGenerator;
+import com.berkleytechnologyservices.restdocs.resource.ResourceModel;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.models.OpenAPI;
 
@@ -19,7 +19,7 @@ public class OpenApiSpecificationGenerator implements SpecificationGenerator {
   }
 
   @Override
-  public String generate(ApiDetails details, List<OpenApiModel> models) {
+  public String generate(ApiDetails details, List<ResourceModel> models) {
     OpenApiBuilder builder = new OpenApiBuilder()
         .name(details.getName())
         .version(details.getVersion());

@@ -1,0 +1,25 @@
+{
+  "operationId" : "product-patch-constraint-violation",
+  "summary" : null,
+  "description" : null,
+  "privateResource" : false,
+  "deprecated" : false,
+  "request" : {
+    "path" : "/products/{id}",
+    "method" : "PATCH",
+    "contentType" : "application/json",
+    "headers" : [ ],
+    "pathParameters" : [ ],
+    "requestParameters" : [ ],
+    "requestFields" : [ ],
+    "example" : "{\n    \"name\": \"Updated name\",\n    \"price\": -12.12\n}",
+    "securityRequirements" : null
+  },
+  "response" : {
+    "status" : 400,
+    "contentType" : "application/json",
+    "headers" : [ ],
+    "responseFields" : [ ],
+    "example" : "{\"errors\":[{\"entity\":\"Product\",\"property\":\"price\",\"invalidValue\":-12.12,\"message\":\"must be greater than 0\"}]}"
+  }
+}

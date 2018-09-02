@@ -6,6 +6,6 @@ import lombok.Value;
 public class HeaderDescriptor implements Descriptor {
   private String name;
   private String description;
-  private String type;
+  private SimpleType type;
   private boolean optional;
 }

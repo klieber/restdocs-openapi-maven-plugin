@@ -1,21 +1,64 @@
 {
-  "request": {
-    "path": "/user",
-    "httpMethod": "get",
-    "basePath": "/api",
-    "host": "api.example.org",
-    "queryParameters": [
-      {
-        "name": "name",
-        "type": "java.lang.String"
+  "operationId" : "products-create",
+  "summary" : null,
+  "description" : null,
+  "privateResource" : false,
+  "deprecated" : false,
+  "request" : {
+    "path" : "/products",
+    "method" : "POST",
+    "contentType" : "application/json",
+    "headers" : [ ],
+    "pathParameters" : [ ],
+    "requestParameters" : [ ],
+    "requestFields" : [ {
+      "attributes" : {
+        "validationConstraints" : [ {
+          "name" : "javax.validation.constraints.NotEmpty",
+          "configuration" : {
+            "groups" : [ ],
+            "message" : "{javax.validation.constraints.NotEmpty.message}",
+            "payload" : [ ]
+          }
+        } ]
       },
-      {
-        "name": "role",
-        "type": "java.lang.String"
-      }
-    ]
+      "description" : "The name of the product.",
+      "ignored" : false,
+      "path" : "name",
+      "type" : "STRING",
+      "optional" : false
+    }, {
+      "attributes" : {
+        "validationConstraints" : [ {
+          "name" : "javax.validation.constraints.NotNull",
+          "configuration" : {
+            "groups" : [ ],
+            "message" : "{javax.validation.constraints.NotNull.message}",
+            "payload" : [ ]
+          }
+        }, {
+          "name" : "javax.validation.constraints.Positive",
+          "configuration" : {
+            "groups" : [ ],
+            "message" : "{javax.validation.constraints.Positive.message}",
+            "payload" : [ ]
+          }
+        } ]
+      },
+      "description" : "The price of the product.",
+      "ignored" : false,
+      "path" : "price",
+      "type" : "NUMBER",
+      "optional" : false
+    } ],
+    "example" : "{\n    \"name\": \"Fancy pants\",\n    \"price\": 49.99\n}",
+    "securityRequirements" : null
   },
-  "response": {
-    "status": 200
+  "response" : {
+    "status" : 201,
+    "contentType" : null,
+    "headers" : [ ],
+    "responseFields" : [ ],
+    "example" : null
   }
 }

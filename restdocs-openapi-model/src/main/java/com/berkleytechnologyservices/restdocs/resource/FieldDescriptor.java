@@ -7,7 +7,7 @@ public class FieldDescriptor implements Descriptor {
   private String name;
   private String path;
   private String description;
-  private String type;
+  private SimpleType type;
   private boolean optional;
   private boolean ignored;
   private Attributes attributes;

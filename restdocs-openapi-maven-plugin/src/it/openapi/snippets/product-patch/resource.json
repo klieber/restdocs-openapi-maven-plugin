@@ -1,0 +1,64 @@
+{
+  "operationId" : "product-patch",
+  "summary" : null,
+  "description" : null,
+  "privateResource" : false,
+  "deprecated" : false,
+  "request" : {
+    "path" : "/products/{id}",
+    "method" : "PATCH",
+    "contentType" : "application/json",
+    "headers" : [ ],
+    "pathParameters" : [ ],
+    "requestParameters" : [ ],
+    "requestFields" : [ {
+      "attributes" : {
+        "validationConstraints" : [ {
+          "name" : "javax.validation.constraints.NotEmpty",
+          "configuration" : {
+            "groups" : [ ],
+            "message" : "{javax.validation.constraints.NotEmpty.message}",
+            "payload" : [ ]
+          }
+        } ]
+      },
+      "description" : "The name of the product.",
+      "ignored" : false,
+      "path" : "name",
+      "type" : "STRING",
+      "optional" : false
+    }, {
+      "attributes" : {
+        "validationConstraints" : [ {
+          "name" : "javax.validation.constraints.NotNull",
+          "configuration" : {
+            "groups" : [ ],
+            "message" : "{javax.validation.constraints.NotNull.message}",
+            "payload" : [ ]
+          }
+        }, {
+          "name" : "javax.validation.constraints.Positive",
+          "configuration" : {
+            "groups" : [ ],
+            "message" : "{javax.validation.constraints.Positive.message}",
+            "payload" : [ ]
+          }
+        } ]
+      },
+      "description" : "The price of the product.",
+      "ignored" : false,
+      "path" : "price",
+      "type" : "NUMBER",
+      "optional" : false
+    } ],
+    "example" : "{\n    \"name\": \"Updated name\",\n    \"price\": 12.12\n}",
+    "securityRequirements" : null
+  },
+  "response" : {
+    "status" : 200,
+    "contentType" : "application/json",
+    "headers" : [ ],
+    "responseFields" : [ ],
+    "example" : "{\n  \"name\" : \"Updated name\",\n  \"price\" : 12.12,\n  \"_links\" : {\n    \"self\" : {\n      \"href\" : \"http://localhost:8080/products/4\"\n    },\n    \"product\" : {\n      \"href\" : \"http://localhost:8080/products/4\"\n    }\n  }\n}"
+  }
+}

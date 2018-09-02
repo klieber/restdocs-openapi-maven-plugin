@@ -1,0 +1,52 @@
+{
+  "operationId" : "product-patch-json-patch",
+  "summary" : null,
+  "description" : null,
+  "privateResource" : false,
+  "deprecated" : false,
+  "request" : {
+    "path" : "/products/{id}",
+    "method" : "PATCH",
+    "contentType" : "application/json-patch+json",
+    "headers" : [ ],
+    "pathParameters" : [ ],
+    "requestParameters" : [ ],
+    "requestFields" : [ {
+      "attributes" : {
+        "validationConstraints" : [ ]
+      },
+      "description" : "Patch operation.",
+      "ignored" : false,
+      "path" : "[].op",
+      "type" : "STRING",
+      "optional" : false
+    }, {
+      "attributes" : {
+        "validationConstraints" : [ ]
+      },
+      "description" : "The path of the field.",
+      "ignored" : false,
+      "path" : "[].path",
+      "type" : "STRING",
+      "optional" : false
+    }, {
+      "attributes" : {
+        "validationConstraints" : [ ]
+      },
+      "description" : "The value to assign.",
+      "ignored" : false,
+      "path" : "[].value",
+      "type" : "STRING",
+      "optional" : false
+    } ],
+    "example" : "[{\"op\":\"replace\",\"path\":\"/name\",\"value\":\"Fancy socks\"}]",
+    "securityRequirements" : null
+  },
+  "response" : {
+    "status" : 200,
+    "contentType" : "application/json",
+    "headers" : [ ],
+    "responseFields" : [ ],
+    "example" : "{\n  \"name\" : \"Fancy socks\",\n  \"price\" : 49.99,\n  \"_links\" : {\n    \"self\" : {\n      \"href\" : \"http://localhost:8080/products/6\"\n    },\n    \"product\" : {\n      \"href\" : \"http://localhost:8080/products/6\"\n    }\n  }\n}"
+  }
+}

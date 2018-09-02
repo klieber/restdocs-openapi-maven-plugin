@@ -1,17 +1,16 @@
 package com.berkleytechnologyservices.restdocs.mojo;
 
-import com.berkleytechnologyservices.restdocs.model.OpenApiModel;
+import com.berkleytechnologyservices.restdocs.resource.ResourceModel;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import javax.inject.Named;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Named
 public class SnippetReader {
@@ -26,31 +25,27 @@ public class SnippetReader {
     this.objectMapper = objectMapper;
   }
 
-  public List<OpenApiModel> getModels(File snippetDirectory) throws MojoExecutionException {
-    try (DirectoryStream<Path> stream = getModelFiles(snippetDirectory)) {
-      return getModels(stream);
+  public List<ResourceModel> getModels(File snippetDirectory) throws MojoExecutionException {
+    try {
+      return Files.walk(snippetDirectory.toPath())
+          .filter(Files::isRegularFile)
+          .filter(SnippetReader::isResourceJson)
+          .map(this::getModel)
+          .collect(Collectors.toList());
     } catch (IOException e) {
       throw new MojoExecutionException("Unable to read snippet files: " + snippetDirectory);
     }
   }
 
-  private DirectoryStream<Path> getModelFiles(File snippetDirectory) throws IOException {
-    return Files.newDirectoryStream(snippetDirectory.toPath(), "*.json");
-  }
-
-  private List<OpenApiModel> getModels(DirectoryStream<Path> stream) throws MojoExecutionException {
-    List<OpenApiModel> models = new ArrayList<>();
-    for (Path path : stream) {
-      models.add(getModel(path));
-    }
-    return models;
-  }
-
-  private OpenApiModel getModel(Path path) throws MojoExecutionException {
+  private ResourceModel getModel(Path path) {
     try {
-      return this.objectMapper.readValue(path.toFile(), OpenApiModel.class);
+      return this.objectMapper.readValue(path.toFile(), ResourceModel.class);
     } catch (IOException e) {
-      throw new MojoExecutionException("Unable to parse snippet file: " + path, e);
+      throw new RuntimeException("Unable to parse snippet file: " + path, e);
     }
+  }
+
+  private static boolean isResourceJson(Path path) {
+    return path.toFile().getName().equals("resource.json");
   }
 }

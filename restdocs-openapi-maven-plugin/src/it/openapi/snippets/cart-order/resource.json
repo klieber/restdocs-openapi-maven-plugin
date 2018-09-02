@@ -1,0 +1,25 @@
+{
+  "operationId" : "cart-order",
+  "summary" : "Order a cart",
+  "description" : "Order a cart",
+  "privateResource" : false,
+  "deprecated" : false,
+  "request" : {
+    "path" : "/carts/{id}/order",
+    "method" : "POST",
+    "contentType" : null,
+    "headers" : [ ],
+    "pathParameters" : [ ],
+    "requestParameters" : [ ],
+    "requestFields" : [ ],
+    "example" : null,
+    "securityRequirements" : null
+  },
+  "response" : {
+    "status" : 200,
+    "contentType" : "application/hal+json",
+    "headers" : [ ],
+    "responseFields" : [ ],
+    "example" : "{\n  \"total\" : 49.99,\n  \"products\" : [ {\n    \"quantity\" : 1,\n    \"product\" : {\n      \"name\" : \"Fancy pants\",\n      \"price\" : 49.99\n    },\n    \"_links\" : {\n      \"product\" : {\n        \"href\" : \"http://localhost:8080/products/3\"\n      }\n    }\n  } ],\n  \"_links\" : {\n    \"self\" : {\n      \"href\" : \"http://localhost:8080/carts/3\"\n    }\n  }\n}"
+  }
+}

@@ -1,12 +1,12 @@
 package com.berkleytechnologyservices.restdocs.mojo.openapi_v3;
 
-import com.berkleytechnologyservices.restdocs.model.OpenApiModel;
-import com.berkleytechnologyservices.restdocs.model.OpenApiParameter;
-import com.berkleytechnologyservices.restdocs.model.OpenApiRequest;
-import com.berkleytechnologyservices.restdocs.model.OpenApiResponse;
+import com.berkleytechnologyservices.restdocs.resource.ParameterDescriptor;
+import com.berkleytechnologyservices.restdocs.resource.RequestModel;
+import com.berkleytechnologyservices.restdocs.resource.ResourceModel;
+import com.berkleytechnologyservices.restdocs.resource.ResponseModel;
+import com.berkleytechnologyservices.restdocs.resource.SimpleType;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.google.common.primitives.Primitives;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
@@ -40,6 +40,13 @@ public class OpenApiBuilder {
       .put(Byte.class, new Schema().type("string").format("byte"))
       .put(Date.class, new Schema().type("string").format("date-time"))
       .put(Calendar.class, new Schema().type("string").format("date-time"))
+      .build();
+
+  private static final Map<SimpleType, Schema> TYPE_SCHEMA_MAP = ImmutableMap.<SimpleType, Schema>builder()
+      .put(SimpleType.STRING, new Schema().type("string"))
+      .put(SimpleType.BOOLEAN, new Schema().type("boolean"))
+      .put(SimpleType.INTEGER, new Schema().type("integer"))
+      .put(SimpleType.NUMBER, new Schema().type("number"))
       .build();
 
   private final Set<String> serverUrls;
@@ -99,26 +106,30 @@ public class OpenApiBuilder {
     return this;
   }
 
-  private OpenApiBuilder model(OpenApiRequest request, OpenApiResponse response) {
+  public OpenApiBuilder model(ResourceModel model) {
+    Operation operation = new Operation()
+        .parameters(createParameters(model.getRequest()))
+        .responses(createResponses(model.getResponse()));
+
+    return this.model(model.getRequest(), model.getResponse());
+  }
+
+  private OpenApiBuilder model(RequestModel request, ResponseModel response) {
     Operation operation = new Operation()
         .parameters(createParameters(request))
         .tags(Lists.newArrayList(convertPathToTag(request)))
-        .responses(new ApiResponses().addApiResponse(Integer.toString(response.getStatus()), new ApiResponse().description("success")));
+        .responses(createResponses(response));
     return this
-        .serverUrl("http", request.getHost(), request.getBasePath())
-        .operation(request.getPath(), request.getHttpMethod(), operation);
+        //.serverUrl("http", request.getHost(), request.getBasePath())
+        .operation(request.getPath(), request.getMethod().name().toLowerCase(), operation);
   }
 
   /**
    * Turn /endpoint/{somePathParam}/somethingElse into "endpoint"
    */
-  private String convertPathToTag(OpenApiRequest request) {
+  private String convertPathToTag(RequestModel request) {
     int secondSlashIndex = request.getPath().indexOf("/", 1);
     return request.getPath().substring(1, secondSlashIndex >= 0 ? secondSlashIndex : request.getPath().length());
-  }
-
-  public OpenApiBuilder model(OpenApiModel model) {
-    return this.model(model.getRequest(), model.getResponse());
   }
 
   public OpenAPI build() {
@@ -140,40 +151,43 @@ public class OpenApiBuilder {
     return new Server().url(serverPath);
   }
 
-  private List<Parameter> createParameters(OpenApiRequest request) {
+  private List<Parameter> createParameters(RequestModel request) {
     List<Parameter> parameters = new ArrayList<>();
     parameters.addAll(createPathParameters(request.getPathParameters()));
-    parameters.addAll(createQueryParameters(request.getQueryParameters()));
+    parameters.addAll(createQueryParameters(request.getRequestParameters()));
     return parameters;
   }
 
-  private List<Parameter> createPathParameters(List<OpenApiParameter> openApiParameters) {
-    return openApiParameters != null ? openApiParameters.stream().map(this::createPathParameter).collect(Collectors.toList()) : Collections.emptyList();
+  private ApiResponses createResponses(ResponseModel response) {
+    return new ApiResponses().addApiResponse(Integer.toString(response.getStatus()), new ApiResponse().description("success"));
   }
 
-  public Parameter createPathParameter(OpenApiParameter openApiParameter) {
-    return createParameter(openApiParameter, "path");
+  private List<Parameter> createPathParameters(List<ParameterDescriptor> descriptors) {
+    return descriptors != null ? descriptors.stream().map(this::createPathParameter).collect(Collectors.toList()) : Collections.emptyList();
   }
 
-  private List<Parameter> createQueryParameters(List<OpenApiParameter> openApiParameters) {
-    return openApiParameters != null ? openApiParameters.stream().map(this::createQueryParameter).collect(Collectors.toList()) : Collections.emptyList();
+  private Parameter createPathParameter(ParameterDescriptor descriptor) {
+    return createParameter(descriptor, "path");
   }
 
-  public Parameter createQueryParameter(OpenApiParameter openApiParameter) {
-    return createParameter(openApiParameter, "query");
+  private List<Parameter> createQueryParameters(List<ParameterDescriptor> descriptors) {
+    return descriptors != null ? descriptors.stream().map(this::createQueryParameter).collect(Collectors.toList()) : Collections.emptyList();
   }
 
-  public Parameter createParameter(OpenApiParameter openApiParameter, String in) {
+  private Parameter createQueryParameter(ParameterDescriptor descriptor) {
+    return createParameter(descriptor, "query");
+  }
+
+  private Parameter createParameter(ParameterDescriptor descriptor, String in) {
     return new Parameter()
-        .name(openApiParameter.getName())
-        .required(true)
-        .description("The " + openApiParameter.getName() + " parameter")
+        .name(descriptor.getName())
+        .description(descriptor.getDescription())
         .in(in)
-        .schema(createSchema(openApiParameter.getType()));
+        .schema(createSchema(descriptor.getType()));
   }
 
-  private Schema createSchema(Class<?> type) {
-    return TYPE_MAP.getOrDefault(Primitives.wrap(type), new Schema().type("object"));
+  private Schema createSchema(SimpleType type) {
+    return TYPE_SCHEMA_MAP.getOrDefault(type, new Schema().type("object"));
   }
 
   private Info createInfo() {
