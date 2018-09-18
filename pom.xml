@@ -39,6 +39,7 @@
 
   <modules>
     <module>restdocs-spec-generator</module>
+    <module>restdocs-spec-endpoint</module>
     <module>restdocs-spec-maven-plugin</module>
   </modules>
 
